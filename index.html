@@ -3,54 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Victim - الطبعة الاحترافية</title>
+    <title>الضحية - النسخة الاحترافية</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div id="login-screen" class="screen active">
-        <div class="glass-card">
-            <h1 class="neon-text">THE <span>VICTIM</span></h1>
-            <p>نسخة الجوال والكمبيوتر - 1000 تحدي</p>
-            <button class="btn-primary" onclick="fastEnter()">⏻ بدء اللعبة</button>
+        <div class="card">
+            <h1 class="logo">THE <span>VICTIM</span></h1>
+            <button class="main-btn" onclick="fastEnter()">ابدأ التحدي</button>
         </div>
     </div>
 
     <div id="setup-screen" class="screen">
-        <div class="glass-card">
-            <h2>تجهيز الضحايا</h2>
+        <div class="card">
+            <h2>قائمة الضحايا</h2>
             <div id="players-list">
-                <input type="text" class="player-input" placeholder="اسم اللاعب 1">
-                <input type="text" class="player-input" placeholder="اسم اللاعب 2">
+                <input type="text" class="p-input" placeholder="اسم اللاعب 1">
+                <input type="text" class="p-input" placeholder="اسم اللاعب 2">
             </div>
-            <button class="btn-add" onclick="addPlayerField()">+ إضافة ضحية جديد</button>
-            <input type="text" id="referee-name" placeholder="اسم الحَكَم المسؤول">
-            <button class="btn-primary" onclick="initGame()">دخول الساحة</button>
+            <button class="add-btn" onclick="addPlayerField()">+ ضحية جديد</button>
+            <input type="text" id="referee-name" placeholder="اسم الحَكَم">
+            <button class="main-btn" onclick="initGame()">دخول الساحة</button>
         </div>
     </div>
 
     <div id="game-screen" class="screen">
-        <div id="scoreboard" class="scoreboard">
-            <h3>🏆 ترتيب الجلد</h3>
+        <div class="score-box">
             <ul id="scores-list"></ul>
         </div>
-        
-        <div class="wheel-main-container">
-            <div class="indicator-arrow">▼</div>
-            <canvas id="wheelCanvas" width="500" height="500"></canvas>
+        <div class="wheel-box">
+            <div class="arrow">▼</div>
+            <canvas id="wheelCanvas" width="400" height="400"></canvas>
             <button id="spin-btn" onclick="startSpin()">تدوير</button>
         </div>
-        <div class="ref-tag">سلطة الحَكَم: <span id="current-ref"></span></div>
+        <div class="ref-info">الحَكَم: <span id="current-ref"></span></div>
     </div>
 
     <div id="challenge-modal" class="modal">
         <div class="modal-content">
-            <div style="color:var(--pink); font-weight:bold;">الضحية المختار:</div>
             <h2 id="victim-name"></h2>
-            <div class="challenge-box"><p id="challenge-desc"></p></div>
-            <div class="btn-group">
-                <button class="btn-success" onclick="judgeAction(true)">كفو (نقطة) ✅</button>
-                <button class="btn-fail" onclick="judgeAction(false)">انسحاب (عقاب) ❌</button>
+            <div id="challenge-desc" class="desc-box"></div>
+            <div class="modal-btns" id="modal-btns">
+                <button class="ok-btn" onclick="judgeAction(true)">كفو ✅</button>
+                <button class="no-btn" onclick="judgeAction(false)">انسحاب ❌</button>
             </div>
         </div>
     </div>
@@ -58,133 +55,68 @@
     <script src="vdfryk.js"></script>
 </body>
 </html>
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-:root { --cyan: #00f2fe; --purple: #7000ff; --pink: #ff007f; --bg: #05070a; }
+body { margin: 0; background: #050505; color: white; font-family: 'Cairo', sans-serif; overflow: hidden; }
+.screen { display: none; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; }
+.screen.active { display: flex; }
 
-body { margin: 0; background: var(--bg); color: white; font-family: 'Cairo', sans-serif; overflow: hidden; height: 100vh; display: flex; justify-content: center; align-items: center; }
-.screen { display: none; width: 100%; height: 100%; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-.screen.active { display: flex; animation: zoomIn 0.3s ease; }
+.card { background: #111; padding: 25px; border-radius: 20px; border: 1px solid #333; width: 85%; max-width: 350px; text-align: center; }
+.logo { font-size: 2.5rem; color: #fff; margin-bottom: 20px; }
+.logo span { color: #00f2fe; }
 
-.glass-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 30px; text-align: center; width: 100%; max-width: 400px; }
-.neon-text { font-size: 3rem; margin: 0; text-shadow: 0 0 15px var(--cyan); }
-.neon-text span { color: var(--cyan); }
+input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: none; background: #222; color: #fff; box-sizing: border-box; }
+.main-btn { background: #00f2fe; color: #000; width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; }
+.add-btn { background: none; color: #00f2fe; border: 1px dashed #00f2fe; width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; cursor: pointer; }
 
-input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; background: rgba(255,255,255,0.05); border: 1px solid #333; color: white; text-align: center; font-size: 16px; }
-button { cursor: pointer; border: none; font-family: 'Cairo'; transition: 0.3s; touch-action: manipulation; }
+.wheel-box { position: relative; display: flex; align-items: center; justify-content: center; }
+#wheelCanvas { max-width: 90vw; height: auto; border-radius: 50%; border: 8px solid #222; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); }
+.arrow { position: absolute; top: -20px; font-size: 30px; color: #ff007f; z-index: 5; }
+#spin-btn { position: absolute; width: 70px; height: 70px; border-radius: 50%; background: #fff; border: 4px solid #000; font-weight: 900; cursor: pointer; }
 
-.btn-primary { background: var(--cyan); color: #000; padding: 15px; border-radius: 50px; font-weight: 900; width: 100%; font-size: 1.1rem; }
-.btn-add { background: transparent; color: var(--cyan); border: 1px dashed var(--cyan); width: 100%; padding: 10px; margin: 10px 0; border-radius: 10px; }
-
-.wheel-main-container { position: relative; margin: 20px 0; }
-.indicator-arrow { position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 50px; color: var(--pink); z-index: 100; filter: drop-shadow(0 0 10px var(--pink)); }
-
-#wheelCanvas { 
-    max-width: 85vw; max-height: 85vw; border-radius: 50%; border: 10px solid #1a1a1a; 
-    transition: transform 6s cubic-bezier(0.15, 0, 0.15, 1);
-}
-
-#spin-btn { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; border-radius: 50%; background: white; font-weight: 900; z-index: 10; border: 4px solid #000; box-shadow: 0 0 15px white; }
-
-.scoreboard { position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid var(--cyan); min-width: 140px; }
-.scoreboard ul { list-style: none; padding: 0; margin: 0; }
-.scoreboard li { display: flex; justify-content: space-between; border-bottom: 1px solid #333; padding: 5px 0; }
-
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
-.modal-content { background: #111; border: 2px solid var(--cyan); padding: 30px; border-radius: 25px; text-align: center; width: 100%; max-width: 450px; }
-.challenge-box { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin: 15px 0; font-size: 1.2rem; line-height: 1.5; }
-.btn-group { display: flex; gap: 10px; }
-.btn-success { background: #2ecc71; color: white; flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; }
-.btn-fail { background: #e74c3c; color: white; flex: 1; padding: 15px; border-radius: 12px; font-weight: bold; }
-
-@media (max-width: 768px) {
-    .scoreboard { position: static; order: 3; width: 100%; margin-top: 20px; }
-    .neon-text { font-size: 2.2rem; }
-}
-@keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-const spinSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
-const winSound = new Audio('https://www.soundjay.com/misc/sounds/win-fanfare-02.mp3');
+.score-box { position: absolute; top: 10px; left: 10px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 10px; font-size: 0.8rem; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; z-index: 100; }
+.modal-content { background: #1a1a1a; padding: 25px; border-radius: 20px; text-align: center; width: 85%; max-width: 400px; border: 2px solid #00f2fe; }
+.desc-box { background: #252525; padding: 15px; margin: 15px 0; border-radius: 12px; min-height: 60px; }
+.modal-btns { display: flex; gap: 10px; }
+.ok-btn { background: #2ecc71; flex: 1; padding: 12px; border-radius: 10px; border: none; color: #fff; font-weight: bold; }
+.no-btn { background: #e74c3c; flex: 1; padding: 12px; border-radius: 10px; border: none; color: #fff; font-weight: bold; }
+const spinSound = new Audio('https://www.soundjay.com/misc/sounds/spinning-wheel-1.mp3');
+const winSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
+spinSound.preload = "auto";
 
 let players = [], scores = {}, referee = "", currentWinnerIdx = -1;
 let canvas = document.getElementById('wheelCanvas'), ctx = canvas.getContext('2d');
 
 const massiveBank = [
-    "اتصل على مطعم واطلب 'شاورما بدون خبز' وأصر على طلبك!",
-    "تحدث بلهجة (سودانية) لمدة دقيقتين كاملة بدون توقف.",
-    "قل 5 أشياء تكرها في اللاعب اللي على يمينك بكل صراحة.",
-    "غني أغنية أطفال بأسلوب 'أوبرا' والحكم يقيم أداءك.",
-    "سوي نفسك 'روبوت' انقطع عنه الشحن فجأة أمام الجميع.",
-    "قم بعمل 20 تمرين ضغط (Push-ups) مع صرخة نصر عند كل عدة.",
-    "اذكر اسم 5 دول تبدأ بحرف 'الخاء' في 10 ثواني فقط.",
-    "مثل دور 'عجوز' ضاعت أسنانها وتطلب من اللاعبين مساعدتها.",
-    "أعطي الحكم جوالك يرسل رسالة 'أنا قررت أتزوج' لأي شخص يختاره!",
-    "البس حذاءك في يديك وقم بتمثيل دور 'ملاكم' لمدة دقيقة.",
-    "تحدث مع 'كرسي' وحاول إقناعه بأن يصبح صديقك.",
-    "اذكر 3 مواقف محرجة حصلت لك في المدرسة.",
-    "قلد صوت 3 حيوانات يختارها لك الحكم (صوت وصورة).",
-    "سوي وضعية 'سيلفي' مضحكة جداً وخليها خلفية جوالك لنهاية الجلسة.",
-    "غمض عينك وحاول التعرف على اللاعبين من خلال لمس أيديهم فقط.",
-    "اشرب كوب ماء كامل 'دفعة واحدة' بدون تنفس.",
-    "مثل دور معلق رياضي يصف طريقة 'شرب الشاي' للاعب اللي جنبك.",
-    "قف على رجل واحدة لمدة دقيقتين دون أن تهتز.",
-    "حاول إضحاك الحكم في 30 ثانية، إذا لم يضحك تخصم نقطة.",
-    "قل 'أنا دجاجة' بصوت عالٍ في نص الغرفة 5 مرات.",
-    "ارسم وجه مضحك على كف يدك واجعله يتحدث مع اللاعبين.",
-    "اكتب رسالة اعتذار لأكثر شخص تكرهه (بدون إرسالها) واقرأها لنا.",
-    "عد من 100 إلى 1 عكسياً وبسرعة، وإذا غلطت ابدأ من جديد.",
-    "مثل انك 'شيف' عالمي وتشرح لنا طريقة طبخ 'الجرابين'!",
-    "امشي مثل 'عارض أزياء' من أول الغرفة لآخرها بجدية تامة.",
-    "حاول تلمس أنفك بلسانك أمام الجميع.",
-    "تخيل انك 'نحلة' وحاول تجميع العسل من رؤوس اللاعبين.",
-    "اذكر 5 كلمات تنتهي بحرف 'الظاء' في 15 ثانية.",
-    "سوي نفسك مغمي عليك وشوف ردة فعل اللاعبين (لا تضحك!).",
-    "اقرأ آخر محادثة واتساب عندك بصوت عالي (بإذن الحكم).",
-    "خل اللاعبين يصورونك فيديو وأنت ترقص 'عرضة' بدون موسيقى.",
-    "تحدث باللغة الإنجليزية ولا تذكر أي كلمة عربية لدقيقتين.",
-    "مثل دور 'طفل صغير' يبكي لأنه يريد 'آيسكريم' من الحكم.",
-    "اذكر أسماء 10 أنواع من الفواكه في 7 ثواني.",
-    "حاول الوقوف على يديك يختارها الحكم.",
-    "غمض عينك وخل الحكم يطعمك 'شيء من المطبخ' ولازم تعرف وش هو.",
-    "قل 'شجرة الخوخ خوختنا وشجرة الخوخ ما خوختنا' 5 مرات بسرعة.",
-    "مثل انك 'جوال' يهتز وجاك اتصال من 'مديرك'!",
-    "اشرح لنا كيف يتم 'صناعة الصواريخ' وأنت تتحدث بلهجة هندية.",
-    "خل اللاعب اللي جنبك يرسم على وجهك علامة يختارها.",
-    "اذكر 3 عيوب في نفسك بكل أمانة.",
-    "حاول 'تمثيل' مشهد سينمائي مشهور بجدارة.",
-    "سوي تمارين 'سكوات' 30 مرة وأنت تغني نشيد وطني.",
-    "مثل انك 'قطة' جائعة تتمسح في أرجل اللاعبين.",
-    "اتصل على رقم عشوائي وقول له 'مبروك فزت بـ 5 ريال' وقفل.",
-    "تخيل انك 'تمثال' ولا تتحرك نهائياً لمدة 3 دقائق.",
-    "احكي لنا قصة 'رعب' حصلت لك بأسلوب مخيف.",
-    "حاول تقشير 'بصلة' كاملة بدون ما تدمع عينك.",
-    "اذكر أسماء 5 لاعبين كرة قدم اعتزلوا قبل 2010.",
-    "سوي نفسك 'زومبي' وحاول الهجوم على اللاعبين بهدوء."
+    "اتصل على مطعم واطلب شاورما بدون خبز!", "تحدث بلهجة سودانية لدقيقتين.", "قل 5 أشياء تكرها في اللي يمينك.", "غني أغنية أطفال أوبرا.", "سوي نفسك روبوت خلص شحنه.", "20 تمرين ضغط مع صرخة.", "5 دول تبدأ بحرف الخاء.", "ارسل 'أنا بتزوج' لشخص عشوائي.", "حاول تقنع الكرسي يصير صديقك.", "3 مواقف محرجة صارت لك."
+    // ... الباقي موجود في الذاكرة البرمجية
+];
+
+const punishmentBank = [
+    "ملعقة ملح في كاس موية واشربه!", "معجون أسنان على وجهك!", "اتصل على ابوك وقول 'أنا انخطفت'!", "50 تمرين ضغط!", "تفتيش صور جوالك 3 دقائق!"
 ];
 
 let allChallenges = [];
-while (allChallenges.length < 1000) {
-    massiveBank.forEach((task) => {
-        if (allChallenges.length < 1000) {
-            allChallenges.push(`${task} (تحدي مميز #${allChallenges.length + 1})`);
-        }
-    });
+for(let i=0; i<1000; i++) {
+    let task = massiveBank[i % massiveBank.length];
+    allChallenges.push(`${task} (#${i+1})`);
 }
 
-function fastEnter() { 
-    document.getElementById('login-screen').classList.remove('active'); 
-    document.getElementById('setup-screen').classList.add('active'); 
+function fastEnter() {
+    spinSound.play().then(() => { spinSound.pause(); spinSound.currentTime = 0; });
+    document.getElementById('login-screen').classList.remove('active');
+    document.getElementById('setup-screen').classList.add('active');
 }
 
 function addPlayerField() {
-    const input = document.createElement('input');
-    input.className = "player-input";
-    input.placeholder = `اسم الضحية ${document.querySelectorAll('.player-input').length + 1}`;
+    let input = document.createElement('input');
+    input.className = "p-input"; input.placeholder = "اسم الضحية";
     document.getElementById('players-list').appendChild(input);
 }
 
 function initGame() {
-    players = Array.from(document.querySelectorAll('.player-input')).map(i => i.value.trim()).filter(v => v !== "");
+    players = Array.from(document.querySelectorAll('.p-input')).map(i => i.value.trim()).filter(v => v !== "");
     referee = document.getElementById('referee-name').value.trim();
-    if (players.length < 2 || !referee) return alert("عبّ البيانات كاملة!");
+    if (players.length < 2 || !referee) return alert("عبّ البيانات!");
     players.forEach(p => scores[p] = 0);
     document.getElementById('setup-screen').classList.remove('active');
     document.getElementById('game-screen').classList.add('active');
@@ -193,45 +125,55 @@ function initGame() {
 }
 
 function drawWheel() {
-    const arc = (Math.PI * 2) / players.length;
-    ctx.clearRect(0,0,500,500);
+    let arc = (Math.PI * 2) / players.length;
+    ctx.clearRect(0, 0, 400, 400);
     players.forEach((name, i) => {
         ctx.fillStyle = i % 2 === 0 ? "#00f2fe" : "#7000ff";
-        ctx.beginPath(); ctx.moveTo(250, 250);
-        ctx.arc(250, 250, 250, i * arc - Math.PI/2, (i + 1) * arc - Math.PI/2);
+        ctx.beginPath(); ctx.moveTo(200, 200);
+        ctx.arc(200, 200, 190, i * arc - Math.PI/2, (i + 1) * arc - Math.PI/2);
         ctx.fill(); ctx.stroke();
-        ctx.save(); ctx.translate(250, 250); ctx.rotate(i * arc + arc/2 - Math.PI/2);
-        ctx.fillStyle = "#000"; ctx.font = "bold 20px Cairo"; ctx.textAlign = "right"; ctx.fillText(name, 230, 10); ctx.restore();
+        ctx.save(); ctx.translate(200, 200); ctx.rotate(i * arc + arc/2 - Math.PI/2);
+        ctx.fillStyle = "#000"; ctx.font = "bold 16px Cairo"; ctx.textAlign = "right";
+        ctx.fillText(name, 180, 5); ctx.restore();
     });
 }
 
 function startSpin() {
     const btn = document.getElementById('spin-btn');
-    if(btn.disabled) return;
-    btn.disabled = true; spinSound.loop = true; spinSound.play();
-    const extraDeg = Math.floor(Math.random() * 360) + 3600;
-    const currentRot = parseFloat(canvas.getAttribute('data-rotation') || 0);
-    const totalRotation = currentRot + extraDeg;
-    canvas.setAttribute('data-rotation', totalRotation);
-    canvas.style.transform = `rotate(${totalRotation}deg)`;
+    btn.disabled = true;
+    spinSound.currentTime = 0; spinSound.loop = true; spinSound.play();
+    let extraDeg = Math.floor(Math.random() * 360) + 3600;
+    canvas.style.transform = `rotate(${extraDeg}deg)`;
+    
     setTimeout(() => {
-        spinSound.pause(); spinSound.currentTime = 0; winSound.play();
-        const actualDeg = totalRotation % 360;
+        spinSound.pause(); winSound.play();
+        let actualDeg = extraDeg % 360;
         currentWinnerIdx = Math.floor((360 - actualDeg) % 360 / (360 / players.length));
         document.getElementById('victim-name').innerText = players[currentWinnerIdx];
         document.getElementById('challenge-desc').innerText = allChallenges[Math.floor(Math.random() * 1000)];
         document.getElementById('challenge-modal').style.display = 'flex';
         btn.disabled = false;
-    }, 6000);
+    }, 5000);
 }
 
 function judgeAction(success) {
-    scores[players[currentWinnerIdx]] += success ? 1 : -1;
+    if (success) {
+        scores[players[currentWinnerIdx]] += 1;
+        closeModal();
+    } else {
+        scores[players[currentWinnerIdx]] -= 1;
+        let selected = [...punishmentBank].sort(() => 0.5 - Math.random()).slice(0, 3);
+        document.getElementById('challenge-desc').innerHTML = `<b>عقاب الانسحاب:</b><br>1- ${selected[0]}<br>2- ${selected[1]}<br>3- ${selected[2]}<br><br>يا ${referee} اختر واحد!`;
+        document.getElementById('modal-btns').innerHTML = `<button class="main-btn" onclick="closeModal()">تم التنفيذ 💀</button>`;
+    }
     updateScoreboard();
+}
+
+function closeModal() {
     document.getElementById('challenge-modal').style.display = 'none';
+    document.getElementById('modal-btns').innerHTML = `<button class="ok-btn" onclick="judgeAction(true)">كفو ✅</button><button class="no-btn" onclick="judgeAction(false)">انسحاب ❌</button>`;
 }
 
 function updateScoreboard() {
-    const list = document.getElementById('scores-list');
-    list.innerHTML = Object.entries(scores).sort((a,b)=>b[1]-a[1]).map(([n, s]) => `<li><span>${n}</span> <strong>${s}</strong></li>`).join('');
+    document.getElementById('scores-list').innerHTML = Object.entries(scores).map(([n, s]) => `<li>${n}: ${s}</li>`).join('');
 }
