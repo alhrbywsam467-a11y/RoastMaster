@@ -103,10 +103,14 @@ button { cursor: pointer; border: none; font-family: 'Cairo'; transition: 0.3s; 
 @keyframes zoomIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 const spinSound = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3');
 const winSound = new Audio('https://www.soundjay.com/misc/sounds/win-fanfare-02.mp3');
+// إعدادات الصوت لضمان السرعة
+spinSound.preload = "auto";
+winSound.preload = "auto";
 
 let players = [], scores = {}, referee = "", currentWinnerIdx = -1;
 let canvas = document.getElementById('wheelCanvas'), ctx = canvas.getContext('2d');
 
+// --- بنك التحديات الأساسي ---
 const massiveBank = [
     "اتصل على مطعم واطلب 'شاورما بدون خبز' وأصر على طلبك!",
     "تحدث بلهجة (سودانية) لمدة دقيقتين كاملة بدون توقف.",
@@ -160,6 +164,23 @@ const massiveBank = [
     "سوي نفسك 'زومبي' وحاول الهجوم على اللاعبين بهدوء."
 ];
 
+// مصفوفة العقوبات
+const punishmentBank = [
+    "اشرب كأس ماء مع ملعقة ملح كبيرة!",
+    "صبغة وجه كاملة بمعجون الأسنان جولة كاملة!",
+    "اتصل على الوالد وقوله 'أنا انخطفت' وقفل جوالك!",
+    "سوي 50 تمرين ضغط فوراً!",
+    "تفتيش كامل لصور جوالك من قبل الحكم لمدة 3 دقائق!",
+    "اطلع للشارع وصيح 'أنا مجنون' 3 مرات!",
+    "كف خفيف (لطمة) من أصغر لاعب موجود!",
+    "أكل بصلة نيئة كاملة أمام الجميع!",
+    "مثل دور 'قرد' يطلب طعام من اللاعبين لمدة دقيقة!",
+    "البس ملابسك بالمقلوب لنهاية اللعبة!",
+    "أكل ملعقة شطة حارة لمدة دقيقة!",
+    "الوقوف على رجل واحدة ورفع اليدين لمدة 5 دقائق!",
+    "تنفيذ طلب واحد لكل لاعب موجود في الجلسة!"
+];
+
 let allChallenges = [];
 while (allChallenges.length < 1000) {
     massiveBank.forEach((task) => {
@@ -170,6 +191,10 @@ while (allChallenges.length < 1000) {
 }
 
 function fastEnter() { 
+    // تفعيل الصوت صامتاً فور الدخول لكسر حماية المتصفح
+    spinSound.play().then(() => { spinSound.pause(); spinSound.currentTime = 0; });
+    winSound.play().then(() => { winSound.pause(); winSound.currentTime = 0; });
+    
     document.getElementById('login-screen').classList.remove('active'); 
     document.getElementById('setup-screen').classList.add('active'); 
 }
@@ -208,14 +233,23 @@ function drawWheel() {
 function startSpin() {
     const btn = document.getElementById('spin-btn');
     if(btn.disabled) return;
-    btn.disabled = true; spinSound.loop = true; spinSound.play();
+    btn.disabled = true; 
+
+    // البدء الفوري للصوت بدون تأخير
+    spinSound.currentTime = 0;
+    spinSound.loop = true;
+    spinSound.play();
+
     const extraDeg = Math.floor(Math.random() * 360) + 3600;
     const currentRot = parseFloat(canvas.getAttribute('data-rotation') || 0);
     const totalRotation = currentRot + extraDeg;
     canvas.setAttribute('data-rotation', totalRotation);
     canvas.style.transform = `rotate(${totalRotation}deg)`;
+
     setTimeout(() => {
-        spinSound.pause(); spinSound.currentTime = 0; winSound.play();
+        spinSound.pause(); 
+        winSound.play();
+        
         const actualDeg = totalRotation % 360;
         currentWinnerIdx = Math.floor((360 - actualDeg) % 360 / (360 / players.length));
         document.getElementById('victim-name').innerText = players[currentWinnerIdx];
@@ -226,9 +260,41 @@ function startSpin() {
 }
 
 function judgeAction(success) {
-    scores[players[currentWinnerIdx]] += success ? 1 : -1;
-    updateScoreboard();
+    if (success) {
+        scores[players[currentWinnerIdx]] += 1;
+        updateScoreboard();
+        document.getElementById('challenge-modal').style.display = 'none';
+    } else {
+        scores[players[currentWinnerIdx]] -= 1;
+        updateScoreboard();
+        
+        let shuffled = [...punishmentBank].sort(() => 0.5 - Math.random());
+        let selected = shuffled.slice(0, 3);
+
+        document.getElementById('challenge-desc').innerHTML = `
+            <div style="color:#ff007f; font-weight:bold; margin-bottom:10px;">⚠️ الضحية انسحب.. وقت العقاب!</div>
+            <div style="text-align:right; font-size:1rem; background:rgba(255,0,0,0.1); padding:10px; border-radius:10px;">
+                1️⃣ ${selected[0]}<br><br>
+                2️⃣ ${selected[1]}<br><br>
+                3️⃣ ${selected[2]}
+            </div>
+            <div style="color:var(--cyan); margin-top:15px; border-top:1px solid #333; padding-top:10px;">
+                يا حَكَم (${referee}): اختر لهم عقاب واحد من الثلاثة!
+            </div>
+        `;
+        
+        const btnGroup = document.querySelector('.btn-group');
+        btnGroup.innerHTML = `<button class="btn-primary" style="background:var(--pink); color:white;" onclick="closeModal()">تم تنفيذ العقاب 💀</button>`;
+    }
+}
+
+function closeModal() {
     document.getElementById('challenge-modal').style.display = 'none';
+    const btnGroup = document.querySelector('.btn-group');
+    btnGroup.innerHTML = `
+        <button class="btn-success" onclick="judgeAction(true)">كفو (نقطة) ✅</button>
+        <button class="btn-fail" onclick="judgeAction(false)">انسحاب (عقاب) ❌</button>
+    `;
 }
 
 function updateScoreboard() {
